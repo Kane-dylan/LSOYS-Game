@@ -1,8 +1,7 @@
-import { useState } from 'react'
-import Game from './Game'
+import { useState } from "react";
+import Game from "./Game";
 
 function App() {
-
   return (
     <>
       <Game />
@@ -10,4 +9,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
