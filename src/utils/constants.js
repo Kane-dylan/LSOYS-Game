@@ -27,3 +27,10 @@ export const OBSTACLE = {
   SPEED: 5,
   SPAWN_X: 800,
 }
+
+// Flame power constants
+export const FLAME = {
+  CHARGE_THRESHOLD: 100, // Points needed to charge flame
+  BURN_RANGE: 200, // Distance to look for obstacles to burn
+  COOLDOWN_TIME: 500, // Milliseconds before can use flame again
+};

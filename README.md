@@ -107,17 +107,6 @@ endless-runner/
 * [ ] Leaderboard (mock JSON).
 * [ ] Pause/Resume button.
 
-
-### **Step 6. Flame Power**
-
-* Track distance or obstacles jumped in state.
-* When threshold reached → `flameReady = true`.
-* On Shift key press:
-  * Remove first obstacle in front.
-  * Set `flameReady = false`.
-
----
-
 ### **Step 7. Duck Obstacles**
 
 * Add different obstacle type with shorter height.

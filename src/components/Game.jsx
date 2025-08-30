@@ -4,6 +4,7 @@ import Player from "./Player";
 import Obstacle from "./Obstacle";
 import Ground from "./Ground";
 import Scoreboard from "./Scoreboard";
+import FlameIndicator from "./FlameIndicator";
 import Controls from "./Controls";
 import { checkCollision } from "../utils/collision";
 import { loadBestScore, saveBestScore } from "../utils/storage";
@@ -26,20 +27,28 @@ export default function Game() {
   const [gameTime, setGameTime] = useState(0);
   const [lastObstacleSpawn, setLastObstacleSpawn] = useState(0);
   const [scoreAccumulator, setScoreAccumulator] = useState(0);
+  const [flameProgress, setFlameProgress] = useState(0);
+  const [lastFlameUse, setLastFlameUse] = useState(0);
+
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isRunning) return;
 
-      switch(e.code) {
-        case 'Space':
-        case 'ArrowUp':
+      switch (e.code) {
+        case "Space":
+        case "ArrowUp":
           e.preventDefault();
           jump();
           break;
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           duck();
+          break;
+        case "ShiftLeft":
+        case "ShiftRight":
+          e.preventDefault();
+          useFlame();
           break;
       }
     }
@@ -53,6 +62,12 @@ export default function Game() {
     setPlayer(prev => {
       // jump while y<= 0
       if(prev.y <= 0) {
+
+        setFlameProgress((prevProgress) => {
+          const newProgress = prevProgress + 10; // 10 points per jump
+          return Math.min(newProgress, FLAME.CHARGE_THRESHOLD);
+        });
+
         return {
           ...prev,
           velocityY: PLAYER.JUMP_VELOCITY,
@@ -64,11 +79,45 @@ export default function Game() {
   };
 
   const duck = () => {
-    setPlayer(prev => ({
-      ...prev,
-      state: prev.y <= 0 ? "ducking" : prev.state,
-      height: prev.y <= 0 ? PLAYER.DUCK_HEIGHT : prev.height
-    }))
+    setPlayer((prev) => {
+      if (prev.y <= 0) {
+        setFlameProgress((prevProgress) => {
+          const newProgress = prevProgress + 5;
+          return Math.min(newProgress, FLAME.CHARGE_THRESHOLD);
+        });
+      }
+
+      return {
+        ...prev,
+        state: prev.y <= 0 ? "ducking" : prev.state,
+        height: prev.y <= 0 ? PLAYER.DUCK_HEIGHT : prev.height,
+      };
+    });
+  }
+
+  const useFlame = () =>{
+    const timeSinceLastUse = gameTime - lastFlameUse;
+    if (!flameReady || timeSinceLastUse < FLAME.COOLDOWN_TIME) {
+      return;
+    }
+    const targetObstacle = obstacles.find(
+      (obs) => obs.x > player.x && obs.x < player.x + FLAME.BURN_RANGE
+    );
+    if (targetObstacle) {
+      // Remove the target obstacle
+      setObstacles((prev) =>
+        prev.filter((obs) => obs.id !== targetObstacle.id)
+      );
+
+      setScore((prevScore) => prevScore + 10);
+
+      console.log("Flame burned obstacle!");
+    }
+
+    // Reset flame power
+    setFlameReady(false);
+    setFlameProgress(0);
+    setLastFlameUse(gameTime);
   }
 
   const spawnObstacle = () => {
@@ -92,77 +141,93 @@ export default function Game() {
   useGameLoop(isRunning, (delta) => {
     const deltaInSeconds = delta / 1000;
 
-    setGameTime(prevTime => prevTime + delta);
-    
+    setGameTime((prevTime) => prevTime + delta);
+
     // update score
-    setScoreAccumulator(prev => {
+    setScoreAccumulator((prev) => {
       const newAccumulator = prev + deltaInSeconds;
       if (newAccumulator >= 0.1) {
-        setScore(prevScore => prevScore + 1);
+        setScore((prevScore) => {
+          const newScore = prevScore + 1;
+
+          setFlameProgress((prevProgress) => {
+            const newProgress = prevProgress + 1;
+            return Math.min(newProgress, FLAME.CHARGE_THRESHOLD);
+          });
+
+          return newScore;
+        });
         return newAccumulator - 0.1;
       }
       return newAccumulator;
-    })
-    
+    });
+
+    // Check if flame should be ready
+    if (flameProgress >= FLAME.CHARGE_THRESHOLD && !flameReady) {
+      setFlameReady(true);
+    }
+
     // player physics
-    setPlayer(prev => {
+    setPlayer((prev) => {
       let newY = prev.y;
       let newVelocityY = prev.velocityY;
       let newState = prev.state;
       let newHeight = prev.height;
-      
-      // gravity 
+
+      // gravity
       newVelocityY += PLAYER.GRAVITY * deltaInSeconds * 60;
-      
-        if(newVelocityY > PLAYER.MAX_FALL_SPEED) {
-          newVelocityY = PLAYER.MAX_FALL_SPEED;
-        }
-      
-        newY += newVelocityY * deltaInSeconds * 60;
 
-        if (newY <= 0) {
-          newY = 0;
-          newVelocityY = 0;
+      if (newVelocityY > PLAYER.MAX_FALL_SPEED) {
+        newVelocityY = PLAYER.MAX_FALL_SPEED;
+      }
 
-          if(prev.state === "jumping") {
-            newState = "running";
-          }
+      newY += newVelocityY * deltaInSeconds * 60;
 
-          if (prev.state === "ducking") {
-            newHeight = PLAYER.HEIGHT;
-            newState = "running"
-          }
+      if (newY <= 0) {
+        newY = 0;
+        newVelocityY = 0;
+
+        if (prev.state === "jumping") {
+          newState = "running";
         }
 
-        return {
-          ...prev,
-          y: newY,
-          velocityY: newVelocityY,
-          state: newState,
-          height: newHeight
+        if (prev.state === "ducking") {
+          newHeight = PLAYER.HEIGHT;
+          newState = "running";
         }
-    })
-    
+      }
+
+      return {
+        ...prev,
+        y: newY,
+        velocityY: newVelocityY,
+        state: newState,
+        height: newHeight,
+      };
+    });
 
     // obstacle positions
-    setObstacles(prev => 
-      prev.map(obs => ({
-        ...obs,
-        x: obs.x - OBSTACLE.SPEED * deltaInSeconds * 60
-      }))
-      .filter(obs => obs.x + obs.width > 0 )
-    )
+    setObstacles((prev) =>
+      prev
+        .map((obs) => ({
+          ...obs,
+          x: obs.x - OBSTACLE.SPEED * deltaInSeconds * 60,
+        }))
+        .filter((obs) => obs.x + obs.width > 0)
+    );
 
     // spawn new obstacles
-    const timeSinceLastSpawn =gameTime - lastObstacleSpawn;
-    const shouldSpawn = Math.random() < GAME.OBSTACLE_SPAWN_RATE && timeSinceLastSpawn > GAME.OBSTACLE_MIN_GAP;
+    const timeSinceLastSpawn = gameTime - lastObstacleSpawn;
+    const shouldSpawn =
+      Math.random() < GAME.OBSTACLE_SPAWN_RATE &&
+      timeSinceLastSpawn > GAME.OBSTACLE_MIN_GAP;
 
     if (shouldSpawn) {
       spawnObstacle();
     }
 
     // check collisions
-    setObstacles(prevObstacles => {
+    setObstacles((prevObstacles) => {
       for (const obstacle of prevObstacles) {
         if (checkCollision(player, obstacle)) {
           // game over logic
@@ -170,14 +235,14 @@ export default function Game() {
           if (score > bestScore) {
             setBestScore(score);
             saveBestScore(score);
-            console.log(`New best score: ${score}!`); 
+            console.log(`New best score: ${score}!`);
           }
-          setPlayer(prev => ({ ...prev, state: "dead"}));
+          setPlayer((prev) => ({ ...prev, state: "dead" }));
           break;
         }
       }
       return prevObstacles;
-    })
+    });
   });
 
   const handleRestart = () => {
@@ -186,6 +251,8 @@ export default function Game() {
     setScoreAccumulator(0);
     setObstacles([]);
     setFlameReady(false);
+    setFlameProgress(0); 
+    setLastFlameUse(0); 
     setGameTime(0);
     setLastObstacleSpawn(0);
     setPlayer({
@@ -194,8 +261,8 @@ export default function Game() {
       velocityY: 0,
       width: PLAYER.WIDTH,
       height: PLAYER.HEIGHT,
-      state: "running"
-    })
+      state: "running",
+    });
   };
 
   return (
