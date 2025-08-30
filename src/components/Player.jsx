@@ -4,7 +4,7 @@ export default function Player({ data, flameReady }) {
     switch(data.state) {
       case "jumping": return "bg-blue-500";
       case "ducking": return "bg-yellow-500";
-      case "dead": return "bg-red-500";
+      case "dead": return "bg-red-500 animate-pulse";
       default: return "bg-green-500";
     }
   };
@@ -29,6 +29,7 @@ export default function Player({ data, flameReady }) {
         {data.state === "jumping" && "↑"}
         {data.state === "ducking" && "↓"}
         {data.state === "running" && "→"}
+        {data.state === "dead" && "💀"}
       </div>
     </div>
   );

@@ -108,17 +108,6 @@ endless-runner/
 * [ ] Pause/Resume button.
 
 
-
-
-
-### **Step 5. Score + Best Score**
-
-* Ensure score increases correctly in loop.
-* Reset score on restart.
-* Save and load best score with `storage.js`.
-
----
-
 ### **Step 6. Flame Power**
 
 * Track distance or obstacles jumped in state.

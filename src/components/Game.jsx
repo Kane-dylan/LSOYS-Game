@@ -24,6 +24,8 @@ export default function Game() {
   const [obstacles, setObstacles] = useState([]);
   const [flameReady, setFlameReady] = useState(false);
   const [gameTime, setGameTime] = useState(0);
+  const [lastObstacleSpawn, setLastObstacleSpawn] = useState(0);
+  const [scoreAccumulator, setScoreAccumulator] = useState(0);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -76,7 +78,7 @@ export default function Game() {
       id: Date.now() + Math.random(),
       x: OBSTACLE.SPAWN_X,
       y: 0,
-      with: OBSTACLE.WIDTH,
+      width: OBSTACLE.WIDTH,
       height: obstacleType === 'duck' ? OBSTACLE.DUCK_HEIGHT : OBSTACLE.HEIGHT,
       type: obstacleType
     };
@@ -93,7 +95,14 @@ export default function Game() {
     setGameTime(prevTime => prevTime + delta);
     
     // update score
-    setScore(prevScore => prevScore + 1);
+    setScoreAccumulator(prev => {
+      const newAccumulator = prev + deltaInSeconds;
+      if (newAccumulator >= 0.1) {
+        setScore(prevScore => prevScore + 1);
+        return newAccumulator - 0.1;
+      }
+      return newAccumulator;
+    })
     
     // player physics
     setPlayer(prev => {
@@ -109,7 +118,7 @@ export default function Game() {
           newVelocityY = PLAYER.MAX_FALL_SPEED;
         }
       
-        newy += newVelocityY * deltaInSeconds * 60;
+        newY += newVelocityY * deltaInSeconds * 60;
 
         if (newY <= 0) {
           newY = 0;
@@ -149,7 +158,7 @@ export default function Game() {
     const shouldSpawn = Math.random() < GAME.OBSTACLE_SPAWN_RATE && timeSinceLastSpawn > GAME.OBSTACLE_MIN_GAP;
 
     if (shouldSpawn) {
-      shouldSpawn();
+      spawnObstacle();
     }
 
     // check collisions
@@ -161,6 +170,7 @@ export default function Game() {
           if (score > bestScore) {
             setBestScore(score);
             saveBestScore(score);
+            console.log(`New best score: ${score}!`); 
           }
           setPlayer(prev => ({ ...prev, state: "dead"}));
           break;
@@ -173,6 +183,7 @@ export default function Game() {
   const handleRestart = () => {
     setIsRunning(true);
     setScore(0);
+    setScoreAccumulator(0);
     setObstacles([]);
     setFlameReady(false);
     setGameTime(0);
@@ -182,6 +193,7 @@ export default function Game() {
       y: 0,
       velocityY: 0,
       width: PLAYER.WIDTH,
+      height: PLAYER.HEIGHT,
       state: "running"
     })
   };
