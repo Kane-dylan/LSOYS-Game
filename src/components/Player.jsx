@@ -1,9 +1,35 @@
-import React from 'react'
+export default function Player({ data, flameReady }) {
 
-const Player = () => {
+  const getStateColor = () => {
+    switch(data.state) {
+      case "jumping": return "bg-blue-500";
+      case "ducking": return "bg-yellow-500";
+      case "dead": return "bg-red-500";
+      default: return "bg-green-500";
+    }
+  };
+
+
   return (
-    <div>Player</div>
-  )
-}
+    <div
+      className={`absolute bottom-16 w-10 bg-green-500 transition-all duration-100 ${getStateColor()}`}
+      style={{
+        left: `${data.x}px`,
+        transform: `translateY(-${data.y}px)`,
+        width: `${data.width}px`,
+        height: `${data.height}px`,
+      }}
+    >
+      {flameReady && (
+        <div className="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+      )}
 
-export default Player
+      {/* Visual state indicator */}
+      <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
+        {data.state === "jumping" && "↑"}
+        {data.state === "ducking" && "↓"}
+        {data.state === "running" && "→"}
+      </div>
+    </div>
+  );
+}

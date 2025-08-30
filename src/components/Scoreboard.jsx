@@ -1,9 +1,8 @@
-import React from 'react'
-
-const Scoreboard = () => {
+export default function Scoreboard({ score, best }) {
   return (
-    <div>Scoreboard</div>
-  )
+    <div className="absolute top-2 left-2 text-xl font-bold">
+      <p>Score: {score}</p>
+      <p>Best: {best}</p>
+    </div>
+  );
 }
-
-export default Scoreboard
