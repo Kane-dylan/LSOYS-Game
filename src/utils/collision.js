@@ -1,27 +1,42 @@
-// FIX: Collision detection - flying obstacles hit from all sides unless ducking
 export function checkCollision(player, obstacle) {
-  // FIX: Basic AABB collision detection for all obstacles
+  // FIX: Collision detection with proper coordinate system (Y = bottom, height extends upward)
+  const playerLeft = player.x;
+  const playerRight = player.x + player.width;
+  const playerBottom = player.y;
+  const playerTop = player.y - player.height; // Top is Y minus height
+
+  const obstacleLeft = obstacle.x;
+  const obstacleRight = obstacle.x + obstacle.width;
+  const obstacleBottom = obstacle.y;
+  const obstacleTop = obstacle.y - obstacle.height; // Top is Y minus height
+
+  // Standard AABB collision detection
   const hasCollision = !(
-    player.x + player.width < obstacle.x ||
-    player.x > obstacle.x + obstacle.width ||
-    player.y + player.height < obstacle.y ||
-    player.y > obstacle.y + obstacle.height
+    playerRight < obstacleLeft ||
+    playerLeft > obstacleRight ||
+    playerTop > obstacleBottom ||
+    playerBottom < obstacleTop
   );
 
-  // FIX: Flying obstacles (type "duck") - collision from any side unless ducking
   if (obstacle.type === "duck") {
-    // Only safe when ducking underneath
+    // FIX: Flying obstacle collision - player can duck under it safely
     if (player.isDucking && hasCollision) {
-      return false; // Player successfully ducks under flying obstacles
+      // Check if there's sufficient vertical clearance
+      // Flying obstacle should be high enough that ducked player passes underneath
+      const duckedPlayerTop = playerBottom - player.height; // Top when ducking
+      const flyingObstacleBottom = obstacleBottom;
+      
+      // Safe passage if ducked player's top is below flying obstacle's bottom
+      if (duckedPlayerTop >= flyingObstacleBottom) {
+        return false; // No collision - safe ducking passage
+      }
     }
-    // All other cases (standing, jumping) with collision = game over
     return hasCollision;
   }
 
-  // FIX: Ground obstacles (type "jump") - standard collision
   if (obstacle.type === "jump") {
     return hasCollision;
   }
 
-  return false; // Default: no collision
+  return false;
 }

@@ -1,4 +1,3 @@
-// FIX: Scoreboard component for left side of top bar
 export default function Scoreboard({ score, bestScore, isNewBest }) {
   return (
     <div className="bg-black bg-opacity-40 backdrop-blur-md p-2 rounded-lg shadow-lg">

@@ -1,4 +1,3 @@
-// FIX: Difficulty indicator component for top bar layout
 export default function DifficultyIndicator({
   gameTime,
   speedMultiplier,

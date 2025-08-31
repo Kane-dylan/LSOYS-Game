@@ -1,35 +1,31 @@
 // Simplified constants - removed all features except core mechanics
 // Removed: FLAME constants, GROUND_Y, scoring constants, pause state, flame states
 
-// Player constants - FIX: jump/duck physics tuned for delta-time game loop
 export const PLAYER = {
-  WIDTH: 40,
-  HEIGHT: 60,
-  DUCK_HEIGHT_RATIO: 0.55, // FIX: jump/duck - ducking reduces height to 55%
-  // Physics constants in px/ms units for delta-time integration
-  GROUND_Y: 300, // FIX: jump/duck - explicit ground level
-  GRAVITY: 0.002, // FIX: jump/duck - gravity in px/ms²
-  JUMP_VELOCITY: 0.9, // FIX: jump/duck - initial jump velocity in px/ms
-  MAX_JUMP_HEIGHT: 110, // FIX: jump/duck - maximum jump height in px
-  TERMINAL_VELOCITY: 1.8, // FIX: jump/duck - maximum fall speed in px/ms
+  WIDTH: 45, // FIX: Increased for better collision detection
+  HEIGHT: 65, // FIX: Increased for better collision detection
+  DUCK_HEIGHT_RATIO: 0.55,
+  GROUND_Y: 300,
+  GRAVITY: 0.002,
+  JUMP_VELOCITY: 0.9,
+  MAX_JUMP_HEIGHT: 110,
+  TERMINAL_VELOCITY: 1.8,
 };
 
-// Game constants
 export const GAME = {
-  OBSTACLE_SPAWN_RATE: 0.015, // FIX: Reduced spawn rate for better spacing
-  OBSTACLE_MIN_GAP: 350, // FIX: Increased minimum gap for better reaction time
-  OBSTACLE_GAP_VARIANCE: 200, // FIX: Add random variance for spawn distance
+  OBSTACLE_SPAWN_RATE: 0.015,
+  OBSTACLE_MIN_GAP: 350,
+  OBSTACLE_GAP_VARIANCE: 200,
 };
 
-// Obstacle constants - FIX: Better visibility and spacing
 export const OBSTACLE = {
-  WIDTH: 30, // FIX: Increased width for better visibility
-  HEIGHT: 50, // FIX: Increased height for better visibility
-  DUCK_HEIGHT: 25, // FIX: Proportional duck height
-  DUCK_Y_OFFSET: 30, // Height above ground for duck obstacles
-  FLY_Y: 300 - 40, // FIX: Lower flying obstacles so player must duck to pass under
-  SPEED: 4, // FIX: Slightly reduced speed for better reaction time
-  SPAWN_X: 900, // FIX: Increased spawn distance for better visibility
+  WIDTH: 35, // FIX: Increased for better collision detection
+  HEIGHT: 55, // FIX: Increased for better collision detection
+  DUCK_HEIGHT: 30, // FIX: Increased proportionally
+  DUCK_Y_OFFSET: 30,
+  FLY_Y: 250, // FIX: Flying obstacle positioned so ducking player (top at ~264) can pass under (bottom at 250)
+  SPEED: 4,
+  SPAWN_X: 900,
 };
 
 // Difficulty scaling constants - simplified to only increase speed and spawn rate

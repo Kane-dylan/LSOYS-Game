@@ -1,118 +1,73 @@
-# LSOYS Game - Enhanced Endless Runner
+# LSOYS Game
 
-A feature-rich React + Vite endless runner game with responsive design and mobile support.
+A fun endless runner game where you control a player character to avoid obstacles by jumping or ducking. Built with React and Vite.
 
-## 🎮 Features
+## Setup
 
-### Core Gameplay
+To get started with the LSOYS Game:
 
-- **Player Controls**: Jump (SPACE/↑) and Duck (↓/S)
-- **Obstacle Types**:
-  - Gray obstacles: Jump over them ⚠️
-  - Red obstacles: Duck under them ✈️
-- **Physics**: Delta-time integration for smooth, frame-rate independent gameplay
-- **Collision Detection**: AABB collision with proper ducking mechanics
+1. **Install dependencies:**
 
-### Scoring & Progression
+   ```bash
+   pnpm install
+   ```
 
-- **Time-based Scoring**: Points awarded based on survival time
-- **Best Score Tracking**: Automatically saved to localStorage
-- **Difficulty Scaling**: Speed and spawn rate gradually increase
-- **New Best Score Indicators**: Visual celebration for personal records
+2. **Run the development server:**
+   ```bash
+   pnpm dev
+   ```
 
-### UI/UX Features
-
-- **Responsive Design**: Works on desktop and mobile devices
-- **Mobile Touch Controls**: Tap top half to jump, bottom half to duck
-- **Pause/Resume**: Press ESC or use the pause button
-- **Game State Management**: Clear win/loss states with restart functionality
-- **Sound Effects**: Basic jump and collision sounds
-- **Visual Polish**: Hover effects, transitions, and animations
-
-### Data & Leaderboard
-
-- **Leaderboard**: View top scores from pre-populated JSON data
-- **Score Comparison**: See how your current score compares to leaderboard
-- **Persistent Storage**: Best scores saved locally
-
-### Keyboard Controls
-
-- **SPACE/↑**: Jump
-- **↓/S**: Duck
-- **ESC**: Pause/Resume
-- **M**: Toggle sound
-- **L**: View leaderboard
-- **R**: Restart (when dead)
-- **ENTER**: Start game
-
-### Mobile Features
-
-- **Touch Controls**: Full-screen touch areas for jump/duck
-- **Responsive Layout**: Optimized for mobile screens
-- **Mobile-friendly UI**: Adapted controls and layout
-
-## 🛠️ Technical Features
-
-- **React + Vite**: Modern development setup with fast HMR
-- **Tailwind CSS**: Responsive utility-first styling
-- **Delta-time Physics**: Frame-rate independent game loop
-- **Component Architecture**: Modular, reusable components
-- **localStorage Integration**: Persistent best score tracking
-- **JSON Data Loading**: Dynamic leaderboard from external file
-- Sound effects and animations
-- Touch controls for mobile
-- Complex UI screens (start, game over, help)
-
-### Folder Structure
-
-simplified-endless-runner/
-├── index.html
-├── package.json
-├── pnpm-lock.yaml
-├── vite.config.js
-└── src/
-├── main.jsx # React entry
-├── App.jsx # Root component, mounts Game
-├── index.css # Tailwind base styles
-│
-├── components/ # Core game components
-│ ├── Game.jsx # Main game loop + state (simplified)
-│ ├── Player.jsx # Player component (no flame effects)
-│ ├── Obstacle.jsx # Obstacle component (no animations)
-│ └── Ground.jsx # Ground / background
-│
-├── hooks/ # Game loop hook
-│ └── useGameLoop.js # requestAnimationFrame logic
-│
-└── utils/ # Core utilities
-├── collision.js # Simple AABB collision detection
-└── constants.js # Game constants (simplified)
-
-## Core Game Flow
-
-1. `Game.jsx` + `useGameLoop.js` → main game loop and state management
-2. `Player.jsx` → running, jumping, ducking states
-3. `Obstacle.jsx` + `collision.js` → obstacle spawning and collision detection
-4. Difficulty increases over time (speed and spawn rate)
-
-## Getting Started
-
-```bash
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-```
+The game will be available at `http://localhost:5173` (or the next available port).
 
 ## Controls
 
-- **SPACE** or **↑**: Jump over gray obstacles
-- **↓**: Duck under red obstacles
-- **R**: Restart game (when dead)
+- **Jump:** Space / Arrow Up / W
+- **Duck:** Arrow Down / S
+- **Pause/Resume:** P
+- **Restart:** R / Restart button
 
-## Game States
+The game supports both keyboard and touch controls for mobile devices.
 
-- **IDLE**: Press SPACE to start
-- **RUNNING**: Game in progress
-- **DEAD**: Collision detected, press R to restart
+## Features
+
+- **Jump and duck mechanics** - Navigate through obstacles with responsive movement
+- **Ground and flying obstacles** - Face different types of challenges that require different strategies
+- **Collision detection and game over** - Precise collision system with immediate feedback
+- **Score and best score with localStorage** - Track your progress with persistent high scores
+- **Difficulty scaling** - Game becomes progressively more challenging as you advance
+- **Responsive UI** - Complete interface with:
+  - Scoreboard displaying current and best scores
+  - Difficulty indicator showing current game speed
+  - Touch controls for mobile devices
+  - Game over screen with restart options
+- **Basic sound effects** - Audio feedback for jumps, game music, and game over events
+
+## Development
+
+This project uses:
+
+- **React** - Frontend framework
+- **Vite** - Build tool and development server
+- **pnpm** - Package manager
+- **ESLint** - Code linting
+
+## Project Structure
+
+```
+src/
+├── components/     # Game components (Player, Obstacles, UI elements)
+├── hooks/         # Custom React hooks (game loop logic)
+├── utils/         # Utility functions (collision, sound, storage)
+├── assets/        # Game assets (images and sounds)
+└── data/          # Game data (leaderboard)
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+Enjoy playing LSOYS Game!
