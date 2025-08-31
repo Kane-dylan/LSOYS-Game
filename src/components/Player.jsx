@@ -1,55 +1,35 @@
 import { PLAYER } from "../utils/constants";
 
-// Simplified Player Component - FIX: jump/duck with proper positioning
+// FIX: Player Component with image only (no background colors)
 export default function Player({ data }) {
-  const getStateColor = () => {
-    switch (data.state) {
-      case "jumping":
-        return "bg-blue-500";
-      case "ducking":
-        return "bg-yellow-500";
-      case "dead":
-        return "bg-red-500";
-      default:
-        return "bg-green-500";
-    }
-  };
-
-  const getTransform = () => {
-    // FIX: jump/duck - Convert game coordinates to screen coordinates
-    // In game: y=GROUND_Y is ground level, smaller y = higher up
-    // In CSS: we position from bottom of screen
-    const screenY = window.innerHeight - data.y - data.height;
-    const baseTransform = `translateY(${screenY}px)`;
-
-    // Add visual changes for different states
-    if (data.state === "jumping") {
-      return `${baseTransform} rotate(-5deg)`;
-    }
-    if (data.state === "ducking") {
-      return `${baseTransform}`;
-    }
-    return baseTransform;
-  };
-
   return (
     <div
-      className={`absolute transition-all duration-100 rounded-lg ${getStateColor()}`}
+      className="absolute"
       style={{
         left: `${data.x}px`,
-        bottom: `64px`, // FIX: jump/duck - position relative to ground
-        transform: `translateY(${-(PLAYER.GROUND_Y - data.y)}px)`, // FIX: jump/duck - proper coordinate conversion
+        bottom: `64px`,
+        transform: `translateY(${-(PLAYER.GROUND_Y - data.y)}px)`,
         width: `${data.width}px`,
         height: `${data.height}px`,
       }}
     >
-      {/* Visual state indicator */}
-      <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-        {data.state === "jumping" && <span>↑</span>}
-        {data.state === "ducking" && <span>↓</span>}
-        {data.state === "running" && <span>→</span>}
-        {data.state === "dead" && <span>💀</span>}
-      </div>
+      {/* FIX: Only show image, no background colors or borders */}
+      <img
+        src="src/assets/images/player.png"
+        alt="Player"
+        className="w-full h-full object-contain"
+        style={{
+          // FIX: Ensure image scales correctly with collision box
+          width: "100%",
+          height: "100%",
+        }}
+        onError={(e) => {
+          // FIX: Fallback to minimal visual indicator if image fails
+          e.target.style.display = "none";
+          e.target.parentElement.innerHTML =
+            '<div class="w-full h-full bg-green-500 rounded"></div>';
+        }}
+      />
     </div>
   );
 }

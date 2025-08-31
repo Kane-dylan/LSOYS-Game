@@ -3,6 +3,8 @@ import Player from "./Player";
 import Obstacle from "./Obstacle";
 import Ground from "./Ground";
 import Scoreboard from "./Scoreboard";
+import DifficultyIndicator from "./DifficultyIndicator";
+import ControllerInstructions from "./ControllerInstructions";
 import Leaderboard from "./Leaderboard";
 import PauseScreen from "./PauseScreen";
 import GameOverScreen from "./GameOverScreen";
@@ -145,23 +147,26 @@ export default function Game() {
     lastTimeRef.current = performance.now();
   };
 
-  // FEATURE: Pause functionality
+  // FIX: Pause functionality with sound
   const pauseGame = () => {
     setGameState(GAME_STATES.PAUSED);
+    soundManager.playPause(); // FIX: Pause sound
   };
 
-  // FEATURE: Resume functionality
+  // FIX: Resume functionality with sound
   const resumeGame = () => {
     setGameState(GAME_STATES.RUNNING);
     lastTimeRef.current = performance.now(); // Reset timer to prevent time jumps
+    soundManager.playResume(); // FIX: Resume sound
   };
 
   const gameOver = () => {
     setGameState(GAME_STATES.DEAD);
     setPlayer((prev) => ({ ...prev, state: "dead" }));
 
-    // FEATURE: Play collision sound
+    // FIX: Play collision and lose music sounds
     soundManager.playCollision();
+    soundManager.playLoseMusic();
 
     // FEATURE: Check and save best score
     if (score > bestScore) {
@@ -302,16 +307,19 @@ export default function Game() {
           .filter((obs) => obs.x + obs.width > 0)
       );
 
-      // Spawn obstacles
+      // FIX: Spawn obstacles with random variance for better spacing
       const timeSinceLastSpawn = gameTime - lastObstacleSpawn;
       const lastObstacle = obstacles[obstacles.length - 1];
+
+      // FIX: Add random variance to minimum gap
+      const randomGap =
+        GAME.OBSTACLE_MIN_GAP + Math.random() * GAME.OBSTACLE_GAP_VARIANCE;
       const hasMinimumGap =
-        !lastObstacle ||
-        lastObstacle.x <= OBSTACLE.SPAWN_X - GAME.OBSTACLE_MIN_GAP;
+        !lastObstacle || lastObstacle.x <= OBSTACLE.SPAWN_X - randomGap;
 
       if (
         Math.random() < spawnRate &&
-        timeSinceLastSpawn > GAME.OBSTACLE_MIN_GAP &&
+        timeSinceLastSpawn > randomGap &&
         hasMinimumGap
       ) {
         spawnObstacle();
@@ -338,6 +346,9 @@ export default function Game() {
   }, [isRunning, controls, gameTime, obstacles, player]);
 
   const handleRestart = () => {
+    // FIX: Restart sound
+    soundManager.playRestart();
+
     setGameState(GAME_STATES.IDLE);
     setObstacles([]);
     setGameTime(0);
@@ -359,19 +370,23 @@ export default function Game() {
     lastTimeRef.current = performance.now();
   };
 
-  // FEATURE: Mobile touch control handlers
+  // FIX: Mobile touch control handlers with sounds
   const handleJump = () => {
     if (gameState === GAME_STATES.IDLE) {
       startGame();
       return;
     }
     if (gameState === GAME_STATES.RUNNING && !controls.jumpDown) {
-      soundManager.playJump();
+      soundManager.playJump(); // FIX: Jump sound
     }
     setControls((prev) => ({ ...prev, jumpDown: true }));
   };
 
   const handleDuck = () => {
+    // FIX: Duck sound when starting to duck
+    if (gameState === GAME_STATES.RUNNING && !controls.duckDown) {
+      soundManager.playDuck();
+    }
     setControls((prev) => ({ ...prev, duckDown: true }));
   };
 
@@ -385,23 +400,37 @@ export default function Game() {
 
   return (
     <div className="game-container relative w-full min-h-screen bg-gradient-to-b from-sky-400 to-sky-200 overflow-hidden">
-      {/* FEATURE: Score display */}
-      <Scoreboard score={score} bestScore={bestScore} isNewBest={isNewBest} />
-
-      {/* FEATURE: Difficulty indicator - enhanced with mobile responsiveness */}
-      {isRunning && (
-        <div className="absolute top-4 right-4 bg-white bg-opacity-90 p-2 rounded-lg text-xs shadow-lg hidden sm:block">
-          <div className="font-bold text-gray-800 mb-1">Difficulty</div>
-          <div>
-            Speed: {getDifficultyModifiers(gameTime).speedMultiplier.toFixed(1)}
-            x
+      {/* FIX: Top bar layout - left: scoreboard, center: instructions, right: difficulty */}
+      <div className="absolute top-4 left-0 right-0 z-20">
+        <div className="flex justify-between items-start px-4 gap-4">
+          {/* FIX: Scoreboard fixed on left */}
+          <div className="flex-shrink-0">
+            <Scoreboard
+              score={score}
+              bestScore={bestScore}
+              isNewBest={isNewBest}
+            />
           </div>
-          <div>
-            Spawn:{" "}
-            {(getDifficultyModifiers(gameTime).spawnRate * 100).toFixed(1)}%
+
+          {/* FIX: Controller instructions centered (hidden on small screens) */}
+          <div className="flex-1 flex justify-center">
+            <ControllerInstructions soundEnabled={soundEnabled} />
+          </div>
+
+          {/* FIX: Difficulty board fixed on right */}
+          <div className="flex-shrink-0">
+            {isRunning && (
+              <DifficultyIndicator
+                gameTime={gameTime}
+                speedMultiplier={
+                  getDifficultyModifiers(gameTime).speedMultiplier
+                }
+                spawnRate={getDifficultyModifiers(gameTime).spawnRate}
+              />
+            )}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Game objects */}
       <Player data={player} />
@@ -443,74 +472,74 @@ export default function Game() {
         />
       )}
 
-      {/* FIX: Controls moved to top-left */}
-      <div className="absolute top-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg">
-        <div className="flex gap-2 mb-2">
-          {gameState === GAME_STATES.IDLE && (
-            <button
-              onClick={startGame}
-              className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
-            >
-              Start
-            </button>
-          )}
-          {(gameState === GAME_STATES.RUNNING) && (
-            <button
-              onClick={pauseGame}
-              className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors"
-            >
-              Pause
-            </button>
-          )}
-          {gameState === GAME_STATES.PAUSED && (
-            <button
-              onClick={resumeGame}
-              className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
-            >
-              Resume
-            </button>
-          )}
-          {gameState === GAME_STATES.DEAD && (
-            <button
-              onClick={handleRestart}
-              className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
-            >
-              Restart
-            </button>
-          )}
-        </div>
-        <div className="text-xs text-gray-600">
-          <div>↑/SPACE: Jump | ↓/S: Duck</div>
-          <div>ESC: Pause | M: Sound {soundEnabled ? "🔊" : "🔇"}</div>
+      {/* FIX: Game action buttons moved below top bar */}
+      <div className="absolute top-20 left-4 z-20">
+        <div className="bg-black bg-opacity-40 backdrop-blur-md p-2 rounded-lg shadow-lg">
+          <div className="flex gap-2">
+            {gameState === GAME_STATES.IDLE && (
+              <button
+                onClick={startGame}
+                className="px-3 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600 transition-colors"
+              >
+                Start
+              </button>
+            )}
+            {gameState === GAME_STATES.RUNNING && (
+              <button
+                onClick={pauseGame}
+                className="px-3 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition-colors"
+              >
+                Pause
+              </button>
+            )}
+            {gameState === GAME_STATES.PAUSED && (
+              <button
+                onClick={resumeGame}
+                className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors"
+              >
+                Resume
+              </button>
+            )}
+            {gameState === GAME_STATES.DEAD && (
+              <button
+                onClick={handleRestart}
+                className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+              >
+                Restart
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* FIX: Game status text centered in sky area */}
-      <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+      {/* FIX: Game status text positioned to avoid UI overlap */}
+      <div className="absolute top-16 sm:top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         {gameState === GAME_STATES.IDLE && (
-          <div className="bg-white bg-opacity-95 p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+          <div className="bg-black bg-opacity-60 backdrop-blur-md p-4 sm:p-6 rounded-lg shadow-xl text-center max-w-xs sm:max-w-sm mx-4">
+            <h1 className="text-xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
               🎮 LSOYS Game
             </h1>
-            <div className="text-lg text-gray-600 mb-4">Endless Runner</div>
-            <div className="text-green-600 font-bold animate-pulse">
+            <div className="text-sm sm:text-lg text-gray-300 mb-3 sm:mb-4">
+              Endless Runner
+            </div>
+            <div className="text-green-300 font-bold animate-pulse">
               <div className="hidden sm:block">Press SPACE to Start</div>
               <div className="sm:hidden">Tap to Start</div>
             </div>
           </div>
         )}
         {gameState === GAME_STATES.PAUSED && (
-          <div className="bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg text-xl font-bold backdrop-blur-sm">
+          <div className="bg-black bg-opacity-60 text-white px-3 sm:px-4 py-2 rounded-lg text-lg sm:text-xl font-bold backdrop-blur-md">
             ⏸️ PAUSED
           </div>
         )}
         {gameState === GAME_STATES.RUNNING && (
-          <div className="bg-green-500 bg-opacity-70 text-white px-3 py-1 rounded text-sm font-bold backdrop-blur-sm">
+          <div className="bg-green-500 bg-opacity-60 text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-bold backdrop-blur-md">
             🏃 RUNNING
           </div>
         )}
         {gameState === GAME_STATES.DEAD && (
-          <div className="bg-red-500 bg-opacity-70 text-white px-4 py-2 rounded-lg text-xl font-bold backdrop-blur-sm">
+          <div className="bg-red-500 bg-opacity-60 text-white px-3 sm:px-4 py-2 rounded-lg text-lg sm:text-xl font-bold backdrop-blur-md">
             💀 GAME OVER
           </div>
         )}

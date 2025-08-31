@@ -16,19 +16,20 @@ export const PLAYER = {
 
 // Game constants
 export const GAME = {
-  OBSTACLE_SPAWN_RATE: 0.02,
-  OBSTACLE_MIN_GAP: 200,
+  OBSTACLE_SPAWN_RATE: 0.015, // FIX: Reduced spawn rate for better spacing
+  OBSTACLE_MIN_GAP: 350, // FIX: Increased minimum gap for better reaction time
+  OBSTACLE_GAP_VARIANCE: 200, // FIX: Add random variance for spawn distance
 };
 
-// Obstacle constants - FIX: jump/duck - flying obstacles positioned relative to ground
+// Obstacle constants - FIX: Better visibility and spacing
 export const OBSTACLE = {
-  WIDTH: 20,
-  HEIGHT: 40,
-  DUCK_HEIGHT: 20,
+  WIDTH: 30, // FIX: Increased width for better visibility
+  HEIGHT: 50, // FIX: Increased height for better visibility
+  DUCK_HEIGHT: 25, // FIX: Proportional duck height
   DUCK_Y_OFFSET: 30, // Height above ground for duck obstacles
   FLY_Y: 300 - 40, // FIX: Lower flying obstacles so player must duck to pass under
-  SPEED: 5,
-  SPAWN_X: 800,
+  SPEED: 4, // FIX: Slightly reduced speed for better reaction time
+  SPAWN_X: 900, // FIX: Increased spawn distance for better visibility
 };
 
 // Difficulty scaling constants - simplified to only increase speed and spawn rate
