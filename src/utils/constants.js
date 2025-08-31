@@ -26,7 +26,7 @@ export const OBSTACLE = {
   HEIGHT: 40,
   DUCK_HEIGHT: 20,
   DUCK_Y_OFFSET: 30, // Height above ground for duck obstacles
-  FLY_Y: 300 - 80, // FIX: jump/duck - flying obstacles at GROUND_Y - 80
+  FLY_Y: 300 - 40, // FIX: Lower flying obstacles so player must duck to pass under
   SPEED: 5,
   SPAWN_X: 800,
 };

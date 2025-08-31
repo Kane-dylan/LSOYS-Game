@@ -1,5 +1,5 @@
-// FEATURE: Mobile-friendly touch controls
-import { useEffect } from "react";
+// FIX: Mobile responsive touch controls
+import { useEffect, useState } from "react";
 import { GAME_STATES } from "../utils/constants";
 
 export default function TouchControls({
@@ -9,8 +9,20 @@ export default function TouchControls({
   onDuckRelease,
   gameState,
 }) {
-  // FEATURE: Handle mobile touch events
+  const [isMobile, setIsMobile] = useState(false);
+
+  // FIX: Detect mobile screen size
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // FIX: Mobile touch event handling
+  useEffect(() => {
+    if (!isMobile || gameState !== GAME_STATES.RUNNING) return;
+
     const handleTouchStart = (e) => {
       e.preventDefault();
       const touch = e.touches[0];
@@ -31,37 +43,33 @@ export default function TouchControls({
       onDuckRelease();
     };
 
-    // Only add touch controls on mobile
-    const isMobile = window.innerWidth < 768;
-    if (isMobile && gameState === GAME_STATES.RUNNING) {
-      document.addEventListener("touchstart", handleTouchStart, {
-        passive: false,
-      });
-      document.addEventListener("touchend", handleTouchEnd, { passive: false });
-    }
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
+    document.addEventListener("touchend", handleTouchEnd, { passive: false });
 
     return () => {
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [gameState, onJump, onDuck, onJumpRelease, onDuckRelease]);
+  }, [gameState, onJump, onDuck, onJumpRelease, onDuckRelease, isMobile]);
 
-  // Show touch controls only on mobile when game is running
-  if (window.innerWidth >= 768 || gameState !== GAME_STATES.RUNNING) {
+  // FIX: Show touch controls only on mobile when game is running
+  if (!isMobile || gameState !== GAME_STATES.RUNNING) {
     return null;
   }
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10">
-      {/* Touch areas visualization */}
-      <div className="absolute top-0 left-0 w-full h-1/2 border-b border-white border-opacity-20 flex items-center justify-center">
-        <div className="text-white text-opacity-40 text-lg font-bold bg-black bg-opacity-20 px-4 py-2 rounded-lg">
-          TAP TO JUMP ⬆️
+      {/* FIX: Clean mobile touch areas */}
+      <div className="absolute top-0 left-0 w-full h-1/2 border-b border-white border-opacity-10 flex items-center justify-center">
+        <div className="text-white text-opacity-50 text-sm font-bold bg-black bg-opacity-30 px-3 py-1 rounded">
+          TAP TO JUMP
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-1/2 border-t border-white border-opacity-20 flex items-center justify-center">
-        <div className="text-white text-opacity-40 text-lg font-bold bg-black bg-opacity-20 px-4 py-2 rounded-lg">
-          TAP TO DUCK ⬇️
+      <div className="absolute bottom-0 left-0 w-full h-1/2 border-t border-white border-opacity-10 flex items-center justify-center">
+        <div className="text-white text-opacity-50 text-sm font-bold bg-black bg-opacity-30 px-3 py-1 rounded">
+          TAP TO DUCK
         </div>
       </div>
     </div>

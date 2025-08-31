@@ -24,24 +24,7 @@ export default function Obstacle({ data }) {
         height: `${data.height}px`,
       }}
     >
-      {/* Visual indicator */}
-      <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-        <span>{data.type === "duck" ? "FLY" : "JUMP"}</span>
-      </div>
-
-      {/* Top indicator for flying obstacles */}
-      {data.type === "duck" && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-red-400 text-sm">
-          ✈
-        </div>
-      )}
-
-      {/* Warning indicator for ground obstacles */}
-      {data.type === "jump" && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm">
-          ⚠
-        </div>
-      )}
+      {/* FIX: Remove visual indicators and icons from obstacles */}
     </div>
   );
 }

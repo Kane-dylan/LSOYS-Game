@@ -1,9 +1,16 @@
-// FEATURE: Basic sound feedback system
+// FIX: Clean sound manager utility for easy file swapping
 class SoundManager {
   constructor() {
     this.enabled = true;
     this.audioContext = null;
     this.sounds = {};
+    this.soundFiles = {
+      gameMusic: "/src/assets/sounds/game_music.mp3",
+      jumpDuckMusic: "/src/assets/sounds/jump-duck_music.mp3", 
+      loseMusic: "/src/assets/sounds/lose_music.wav",
+      jump: "/src/assets/sounds/jump.mp3",
+      collision: "/src/assets/sounds/collision.mp3"
+    };
     this.initAudioContext();
   }
 
@@ -16,15 +23,81 @@ class SoundManager {
     }
   }
 
-  // FEATURE: Generate simple beep sounds
-  playJump() {
+  // FIX: Load audio file utility
+  async loadSound(key) {
+    if (!this.audioContext || this.sounds[key]) return;
+
+    try {
+      const response = await fetch(this.soundFiles[key]);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      this.sounds[key] = audioBuffer;
+    } catch (error) {
+      console.warn(`Failed to load sound ${key}:`, error);
+      // Fallback to beep sounds
+      this.generateBeepSound(key);
+    }
+  }
+
+  // FIX: Fallback beep generation
+  generateBeepSound(key) {
+    if (!this.audioContext) return;
+    
+    const frequencies = {
+      jump: 400,
+      collision: 150,
+      gameMusic: 300,
+      jumpDuckMusic: 350,
+      loseMusic: 200
+    };
+    
+    this.sounds[key] = { beep: true, frequency: frequencies[key] || 300 };
+  }
+
+  // FIX: Play sound with file support
+  playSound(key) {
     if (!this.enabled || !this.audioContext) return;
-    this.playBeep(400, 0.1, "square"); // Jump sound
+
+    if (!this.sounds[key]) {
+      this.loadSound(key);
+      // Play beep as fallback immediately
+      this.playBeep(key === 'jump' ? 400 : 150, 0.1, "square");
+      return;
+    }
+
+    try {
+      if (this.sounds[key].beep) {
+        this.playBeep(this.sounds[key].frequency, 0.1, "square");
+      } else {
+        const source = this.audioContext.createBufferSource();
+        source.buffer = this.sounds[key];
+        source.connect(this.audioContext.destination);
+        source.start();
+      }
+    } catch (error) {
+      console.warn(`Failed to play sound ${key}:`, error);
+    }
+  }
+
+  // FIX: Simple API methods
+  playJump() {
+    this.playSound('jump');
   }
 
   playCollision() {
-    if (!this.enabled || !this.audioContext) return;
-    this.playBeep(150, 0.3, "sawtooth"); // Collision sound
+    this.playSound('collision');
+  }
+
+  playGameMusic() {
+    this.playSound('gameMusic');
+  }
+
+  playJumpDuckMusic() {
+    this.playSound('jumpDuckMusic');
+  }
+
+  playLoseMusic() {
+    this.playSound('loseMusic');
   }
 
   playBeep(frequency, duration, type = "sine") {

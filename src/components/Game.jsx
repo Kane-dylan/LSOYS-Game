@@ -443,25 +443,52 @@ export default function Game() {
         />
       )}
 
-      {/* FEATURE: Enhanced controls display - responsive */}
-      <div className="absolute bottom-4 right-4 bg-white bg-opacity-90 p-3 rounded-lg text-sm shadow-lg">
-        <div className="font-bold text-gray-800 mb-2">Controls</div>
-        <div className="space-y-1 text-xs">
-          <div>↑/SPACE: Jump</div>
-          <div>↓/S: Duck</div>
-          <div>ESC: Pause</div>
-          <div>M: Sound {soundEnabled ? "🔊" : "🔇"}</div>
-          <div>L: Leaderboard</div>
-          <div className="sm:hidden text-blue-600 font-bold">
-            📱 Tap screen to play
-          </div>
+      {/* FIX: Controls moved to top-left */}
+      <div className="absolute top-4 left-4 bg-white bg-opacity-90 p-3 rounded-lg shadow-lg">
+        <div className="flex gap-2 mb-2">
+          {gameState === GAME_STATES.IDLE && (
+            <button
+              onClick={startGame}
+              className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
+            >
+              Start
+            </button>
+          )}
+          {(gameState === GAME_STATES.RUNNING) && (
+            <button
+              onClick={pauseGame}
+              className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors"
+            >
+              Pause
+            </button>
+          )}
+          {gameState === GAME_STATES.PAUSED && (
+            <button
+              onClick={resumeGame}
+              className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
+            >
+              Resume
+            </button>
+          )}
+          {gameState === GAME_STATES.DEAD && (
+            <button
+              onClick={handleRestart}
+              className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
+            >
+              Restart
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-gray-600">
+          <div>↑/SPACE: Jump | ↓/S: Duck</div>
+          <div>ESC: Pause | M: Sound {soundEnabled ? "🔊" : "🔇"}</div>
         </div>
       </div>
 
-      {/* FEATURE: Game state indicator */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10">
+      {/* FIX: Game status text centered in sky area */}
+      <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         {gameState === GAME_STATES.IDLE && (
-          <div className="bg-white bg-opacity-90 p-6 rounded-lg shadow-xl">
+          <div className="bg-white bg-opacity-95 p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
               🎮 LSOYS Game
             </h1>
@@ -472,7 +499,66 @@ export default function Game() {
             </div>
           </div>
         )}
+        {gameState === GAME_STATES.PAUSED && (
+          <div className="bg-black bg-opacity-50 text-white px-4 py-2 rounded-lg text-xl font-bold backdrop-blur-sm">
+            ⏸️ PAUSED
+          </div>
+        )}
+        {gameState === GAME_STATES.RUNNING && (
+          <div className="bg-green-500 bg-opacity-70 text-white px-3 py-1 rounded text-sm font-bold backdrop-blur-sm">
+            🏃 RUNNING
+          </div>
+        )}
+        {gameState === GAME_STATES.DEAD && (
+          <div className="bg-red-500 bg-opacity-70 text-white px-4 py-2 rounded-lg text-xl font-bold backdrop-blur-sm">
+            💀 GAME OVER
+          </div>
+        )}
       </div>
+
+      {/* Game entities - only render when game is active */}
+      {gameState !== GAME_STATES.IDLE && (
+        <>
+          <Ground />
+          <Player data={player} />
+          {obstacles.map((obstacle) => (
+            <Obstacle key={obstacle.id} data={obstacle} />
+          ))}
+        </>
+      )}
+
+      {/* Touch Controls for mobile */}
+      <TouchControls
+        onJump={handleJump}
+        onDuck={handleDuck}
+        onJumpRelease={handleJumpRelease}
+        onDuckRelease={handleDuckRelease}
+        gameState={gameState}
+      />
+
+      {/* Pause Screen */}
+      {gameState === GAME_STATES.PAUSED && (
+        <PauseScreen onResume={resumeGame} />
+      )}
+
+      {/* Game Over Screen */}
+      {gameState === GAME_STATES.DEAD && (
+        <GameOverScreen
+          score={score}
+          bestScore={bestScore}
+          isNewBest={isNewBest}
+          onRestart={handleRestart}
+          onViewLeaderboard={() => setShowLeaderboard(true)}
+        />
+      )}
+
+      {/* Leaderboard modal */}
+      {showLeaderboard && (
+        <Leaderboard
+          currentScore={score}
+          onClose={() => setShowLeaderboard(false)}
+        />
+      )}
     </div>
   );
 }
