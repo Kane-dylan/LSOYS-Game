@@ -28,7 +28,15 @@ The game will be available at `http://localhost:5173` (or the next available por
 
 The game supports both keyboard and touch controls for mobile devices.
 
-### [Demo](https://www.loom.com/share/ccfbab214a7947009bd907762e4758ce?sid=ef7b9359-c21c-4381-8ab6-528d10d3d2a1)
+---
+
+
+
+## [Demo](https://www.loom.com/share/ccfbab214a7947009bd907762e4758ce?sid=ef7b9359-c21c-4381-8ab6-528d10d3d2a1)       [Play](https://endless-game-seven.vercel.app/)
+
+---
+
+
 
 ## Features
 
@@ -43,6 +51,10 @@ The game supports both keyboard and touch controls for mobile devices.
   - Touch controls for mobile devices
   - Game over screen with restart options
 - **Basic sound effects** - Audio feedback for jumps, game music, and game over events
+
+## Known issues
+
+In the mobile screen the game is little hard to controle for the user.
 
 ## Development
 
