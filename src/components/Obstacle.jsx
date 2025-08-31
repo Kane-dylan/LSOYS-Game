@@ -26,9 +26,7 @@ export default function Obstacle({ data }) {
     >
       {/* Visual indicator */}
       <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
-        <span>
-          {data.type === "duck" ? "FLY" : "JUMP"}
-        </span>
+        <span>{data.type === "duck" ? "FLY" : "JUMP"}</span>
       </div>
 
       {/* Top indicator for flying obstacles */}

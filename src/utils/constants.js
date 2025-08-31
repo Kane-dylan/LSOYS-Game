@@ -41,9 +41,16 @@ export const DIFFICULTY = {
   MAX_SPAWN_RATE: 0.08,
 };
 
-// Game state constants - simplified
+// Game state constants - FEATURE: Added pause state
 export const GAME_STATES = {
   IDLE: "idle",
   RUNNING: "running",
+  PAUSED: "paused", // FEATURE: Pause/resume functionality
   DEAD: "dead",
+};
+
+// FEATURE: Score constants for time/distance based scoring
+export const SCORE = {
+  TIME_MULTIPLIER: 0.01, // Points per millisecond
+  DISTANCE_MULTIPLIER: 0.1, // Additional points per distance unit
 };

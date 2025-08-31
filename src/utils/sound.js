@@ -1,122 +1,65 @@
-// Sound management utility
+// FEATURE: Basic sound feedback system
 class SoundManager {
   constructor() {
-    this.sounds = {};
-    this.muted = false;
-    this.volume = 0.5;
+    this.enabled = true;
     this.audioContext = null;
+    this.sounds = {};
+    this.initAudioContext();
   }
 
-  // Create simple beep sounds using Web Audio API if files don't exist
-  createBeepSound(frequency, duration, type = "sine") {
-    if (!this.audioContext) {
-      try {
-        this.audioContext = new (window.AudioContext ||
-          window.webkitAudioContext)();
-      } catch (e) {
-        console.warn("Web Audio not supported");
-        return null;
-      }
-    }
-
-    const oscillator = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
-
-    oscillator.frequency.value = frequency;
-    oscillator.type = type;
-
-    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(
-      this.volume * 0.3,
-      this.audioContext.currentTime + 0.01
-    );
-    gainNode.gain.exponentialRampToValueAtTime(
-      0.01,
-      this.audioContext.currentTime + duration
-    );
-
-    oscillator.start(this.audioContext.currentTime);
-    oscillator.stop(this.audioContext.currentTime + duration);
-
-    return oscillator;
-  }
-
-  async loadSound(name, path) {
+  initAudioContext() {
     try {
-      const audio = new Audio(path);
-      audio.preload = "auto";
-      audio.volume = this.volume;
-
-      // Test if the file loads
-      await new Promise((resolve, reject) => {
-        audio.addEventListener("canplaythrough", resolve);
-        audio.addEventListener("error", reject);
-        audio.load();
-      });
-
-      this.sounds[name] = audio;
+      this.audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
     } catch (error) {
-      console.warn(`Failed to load sound: ${name}, using fallback`, error);
-      // Create fallback sounds
-      this.sounds[name] = { fallback: true, name };
+      console.warn("Web Audio API not supported:", error);
     }
   }
 
-  async initializeSounds() {
-    const soundPaths = {
-      jump: "/src/assets/sound/jump.mp3",
-      hit: "/src/assets/sound/hit.mp3",
-      flame: "/src/assets/sound/flame.mp3",
-    };
-
-    for (const [name, path] of Object.entries(soundPaths)) {
-      await this.loadSound(name, path);
-    }
+  // FEATURE: Generate simple beep sounds
+  playJump() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playBeep(400, 0.1, "square"); // Jump sound
   }
 
-  play(soundName) {
-    if (this.muted || !this.sounds[soundName]) return;
+  playCollision() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playBeep(150, 0.3, "sawtooth"); // Collision sound
+  }
+
+  playBeep(frequency, duration, type = "sine") {
+    if (!this.audioContext) return;
 
     try {
-      const sound = this.sounds[soundName];
+      const oscillator = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
 
-      if (sound.fallback) {
-        // Use beep sounds as fallback
-        switch (soundName) {
-          case "jump":
-            this.createBeepSound(440, 0.1, "sine"); // A4 note
-            break;
-          case "hit":
-            this.createBeepSound(150, 0.3, "sawtooth"); // Low harsh sound
-            break;
-          case "flame":
-            this.createBeepSound(800, 0.2, "triangle"); // High pitched
-            break;
-        }
-      } else {
-        sound.currentTime = 0; // Reset to start
-        sound.play();
-      }
+      oscillator.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+
+      oscillator.frequency.value = frequency;
+      oscillator.type = type;
+
+      gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.001,
+        this.audioContext.currentTime + duration
+      );
+
+      oscillator.start(this.audioContext.currentTime);
+      oscillator.stop(this.audioContext.currentTime + duration);
     } catch (error) {
-      console.warn(`Failed to play sound: ${soundName}`, error);
+      console.warn("Failed to play sound:", error);
     }
-  }
-
-  setVolume(volume) {
-    this.volume = Math.max(0, Math.min(1, volume));
-    Object.values(this.sounds).forEach((sound) => {
-      if (!sound.fallback) {
-        sound.volume = this.volume;
-      }
-    });
   }
 
   toggle() {
-    this.muted = !this.muted;
-    return this.muted;
+    this.enabled = !this.enabled;
+    return this.enabled;
+  }
+
+  setEnabled(enabled) {
+    this.enabled = enabled;
   }
 }
 

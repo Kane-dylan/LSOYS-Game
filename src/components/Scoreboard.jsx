@@ -1,35 +1,20 @@
-export default function Scoreboard({ score, best }) {
-  const getNextMilestone = (currentScore) => {
-    const milestones = [50, 100, 150, 200, 250, 300, 400, 500];
-    return milestones.find((milestone) => milestone > currentScore) || null;
-  };
-
-  const nextMilestone = getNextMilestone(score);
-
+// FEATURE: Score display component with current and best score
+export default function Scoreboard({ score, bestScore, isNewBest }) {
   return (
-    <div className="absolute top-4 left-4 bg-white bg-opacity-80 p-3 rounded-lg shadow-lg">
+    <div className="absolute top-4 left-4 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg backdrop-blur-sm">
       <div className="text-lg font-bold text-gray-800">
-        <p className="mb-1">
-          Score: <span className="text-blue-600">{score}</span>
-        </p>
-        <p>
-          Best: <span className="text-yellow-600">{best}</span>
-        </p>
+        <div className="mb-2">
+          Score: <span className="text-blue-600">{Math.floor(score)}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          Best: <span className="text-yellow-600">{Math.floor(bestScore)}</span>
+          {isNewBest && (
+            <span className="text-green-600 text-sm font-bold animate-pulse">
+              🎉 NEW!
+            </span>
+          )}
+        </div>
       </div>
-
-      {/* Milestone progress */}
-      {nextMilestone && (
-        <div className="mt-2 text-xs text-gray-600">
-          Next Level: {nextMilestone} ({nextMilestone - score} to go)
-        </div>
-      )}
-
-      {/* Show "NEW BEST!" indicator */}
-      {score > 0 && score > best && (
-        <div className="text-green-600 font-bold text-sm mt-1 animate-pulse">
-          NEW BEST!
-        </div>
-      )}
     </div>
   );
 }
