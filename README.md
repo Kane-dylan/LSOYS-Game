@@ -11,8 +11,8 @@ To get started with the LSOYS Game:
    ```bash
    pnpm install
    ```
-
 2. **Run the development server:**
+
    ```bash
    pnpm dev
    ```
@@ -27,6 +27,8 @@ The game will be available at `http://localhost:5173` (or the next available por
 - **Restart:** R / Restart button
 
 The game supports both keyboard and touch controls for mobile devices.
+
+### [Demo](https://www.loom.com/share/ccfbab214a7947009bd907762e4758ce?sid=ef7b9359-c21c-4381-8ab6-528d10d3d2a1)
 
 ## Features
 
