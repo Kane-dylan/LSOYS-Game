@@ -7,9 +7,11 @@ export default function TouchControls({
   onFlame,
   flameReady,
 }) {
-  if (gameState !== GAME_STATES.RUNNING && 
-      gameState !== GAME_STATES.FLAME_READY && 
-      gameState !== GAME_STATES.FLAME_USED) {
+  if (
+    gameState !== GAME_STATES.RUNNING &&
+    gameState !== GAME_STATES.FLAME_READY &&
+    gameState !== GAME_STATES.FLAME_USED
+  ) {
     return null;
   }
 
@@ -47,8 +49,8 @@ export default function TouchControls({
           disabled={!flameReady}
           className={`w-16 h-16 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg border-2 ${
             flameReady
-              ? 'bg-red-500 bg-opacity-80 border-red-300 active:bg-red-600 animate-pulse'
-              : 'bg-gray-400 bg-opacity-80 border-gray-300 cursor-not-allowed'
+              ? "bg-red-500 bg-opacity-80 border-red-300 active:bg-red-600 animate-pulse"
+              : "bg-gray-400 bg-opacity-80 border-gray-300 cursor-not-allowed"
           }`}
         >
           🔥

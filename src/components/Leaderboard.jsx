@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-const LEADERBOARD_KEY = 'lsoys-leaderboard';
+const LEADERBOARD_KEY = "lsoys-leaderboard";
 const MAX_ENTRIES = 10;
 
 export default function Leaderboard({ currentScore, isVisible, onClose }) {
   const [leaderboard, setLeaderboard] = useState([]);
-  const [playerName, setPlayerName] = useState('');
+  const [playerName, setPlayerName] = useState("");
   const [isNewHighScore, setIsNewHighScore] = useState(false);
   const [showNameInput, setShowNameInput] = useState(false);
 
@@ -25,15 +25,17 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
       const entries = stored ? JSON.parse(stored) : [];
       setLeaderboard(entries);
     } catch (error) {
-      console.warn('Failed to load leaderboard:', error);
+      console.warn("Failed to load leaderboard:", error);
       setLeaderboard([]);
     }
   };
 
   const checkIfHighScore = (score) => {
-    const wouldMakeLeaderboard = leaderboard.length < MAX_ENTRIES || 
-      score > leaderboard[leaderboard.length - 1]?.score || 0;
-    
+    const wouldMakeLeaderboard =
+      leaderboard.length < MAX_ENTRIES ||
+      score > leaderboard[leaderboard.length - 1]?.score ||
+      0;
+
     if (wouldMakeLeaderboard) {
       setIsNewHighScore(true);
       setShowNameInput(true);
@@ -47,7 +49,7 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
       name: playerName.trim(),
       score: currentScore,
       date: new Date().toLocaleDateString(),
-      id: Date.now()
+      id: Date.now(),
     };
 
     const updatedLeaderboard = [...leaderboard, newEntry]
@@ -55,34 +57,38 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
       .slice(0, MAX_ENTRIES);
 
     setLeaderboard(updatedLeaderboard);
-    
+
     try {
       localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(updatedLeaderboard));
     } catch (error) {
-      console.warn('Failed to save leaderboard:', error);
+      console.warn("Failed to save leaderboard:", error);
     }
 
     setShowNameInput(false);
-    setPlayerName('');
+    setPlayerName("");
   };
 
   const getRankSuffix = (rank) => {
     const lastDigit = rank % 10;
     const lastTwoDigits = rank % 100;
-    
-    if (lastTwoDigits >= 11 && lastTwoDigits <= 13) return 'th';
-    if (lastDigit === 1) return 'st';
-    if (lastDigit === 2) return 'nd';
-    if (lastDigit === 3) return 'rd';
-    return 'th';
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 13) return "th";
+    if (lastDigit === 1) return "st";
+    if (lastDigit === 2) return "nd";
+    if (lastDigit === 3) return "rd";
+    return "th";
   };
 
   const getRankIcon = (rank) => {
     switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return '🏅';
+      case 1:
+        return "🥇";
+      case 2:
+        return "🥈";
+      case 3:
+        return "🥉";
+      default:
+        return "🏅";
     }
   };
 
@@ -92,7 +98,9 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 bounce-in">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">🏆 Leaderboard</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            🏆 Leaderboard
+          </h2>
           {isNewHighScore && (
             <div className="text-green-600 font-bold animate-pulse">
               🎉 New High Score! 🎉
@@ -116,7 +124,7 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
                 placeholder="Your name"
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 maxLength={20}
-                onKeyPress={(e) => e.key === 'Enter' && saveToLeaderboard()}
+                onKeyPress={(e) => e.key === "Enter" && saveToLeaderboard()}
                 autoFocus
               />
               <button
@@ -140,17 +148,18 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
             <div className="space-y-2">
               {leaderboard.map((entry, index) => {
                 const rank = index + 1;
-                const isCurrentScore = entry.score === currentScore && 
-                  entry.name === playerName && 
-                  entry.id === Math.max(...leaderboard.map(e => e.id));
-                
+                const isCurrentScore =
+                  entry.score === currentScore &&
+                  entry.name === playerName &&
+                  entry.id === Math.max(...leaderboard.map((e) => e.id));
+
                 return (
                   <div
                     key={entry.id}
                     className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                      isCurrentScore 
-                        ? 'bg-green-100 border-2 border-green-300' 
-                        : 'bg-gray-50 hover:bg-gray-100'
+                      isCurrentScore
+                        ? "bg-green-100 border-2 border-green-300"
+                        : "bg-gray-50 hover:bg-gray-100"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -159,16 +168,23 @@ export default function Leaderboard({ currentScore, isVisible, onClose }) {
                         <div className="font-semibold text-gray-800">
                           {entry.name}
                           {isCurrentScore && (
-                            <span className="ml-2 text-green-600 text-sm">(You!)</span>
+                            <span className="ml-2 text-green-600 text-sm">
+                              (You!)
+                            </span>
                           )}
                         </div>
-                        <div className="text-xs text-gray-500">{entry.date}</div>
+                        <div className="text-xs text-gray-500">
+                          {entry.date}
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-blue-600">{entry.score}</div>
+                      <div className="font-bold text-blue-600">
+                        {entry.score}
+                      </div>
                       <div className="text-xs text-gray-500">
-                        {rank}{getRankSuffix(rank)} place
+                        {rank}
+                        {getRankSuffix(rank)} place
                       </div>
                     </div>
                   </div>

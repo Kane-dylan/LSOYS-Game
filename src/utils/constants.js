@@ -1,59 +1,49 @@
-// Player constants
+// Simplified constants - removed all features except core mechanics
+// Removed: FLAME constants, GROUND_Y, scoring constants, pause state, flame states
+
+// Player constants - FIX: jump/duck physics tuned for delta-time game loop
 export const PLAYER = {
   WIDTH: 40,
   HEIGHT: 60,
-  JUMP_VELOCITY: -15,
-  DUCK_HEIGHT: 30,
-  GRAVITY: 0.8,
-  GROUND_Y: 64,
-  MAX_FALL_SPEED: 20,
+  DUCK_HEIGHT_RATIO: 0.55, // FIX: jump/duck - ducking reduces height to 55%
+  // Physics constants in px/ms units for delta-time integration
+  GROUND_Y: 300, // FIX: jump/duck - explicit ground level
+  GRAVITY: 0.002, // FIX: jump/duck - gravity in px/ms²
+  JUMP_VELOCITY: 0.9, // FIX: jump/duck - initial jump velocity in px/ms
+  MAX_JUMP_HEIGHT: 110, // FIX: jump/duck - maximum jump height in px
+  TERMINAL_VELOCITY: 1.8, // FIX: jump/duck - maximum fall speed in px/ms
 };
 
 // Game constants
 export const GAME = {
-  SPEED: 5,
   OBSTACLE_SPAWN_RATE: 0.02,
   OBSTACLE_MIN_GAP: 200,
-  SCORE_INCREMENT_RATE: 0.1,
-  POINTS_PER_INCREMENT: 1,
 };
 
-// Obstacle constants
+// Obstacle constants - FIX: jump/duck - flying obstacles positioned relative to ground
 export const OBSTACLE = {
   WIDTH: 20,
   HEIGHT: 40,
   DUCK_HEIGHT: 20,
+  DUCK_Y_OFFSET: 30, // Height above ground for duck obstacles
+  FLY_Y: 300 - 80, // FIX: jump/duck - flying obstacles at GROUND_Y - 80
   SPEED: 5,
   SPAWN_X: 800,
 };
 
-// Flame power constants
-export const FLAME = {
-  CHARGE_THRESHOLD: 100,
-  BURN_RANGE: 200,
-  COOLDOWN_TIME: 500,
-  EFFECT_DURATION: 300, // Visual effect duration
-};
-
-// Difficulty scaling constants
+// Difficulty scaling constants - simplified to only increase speed and spawn rate
 export const DIFFICULTY = {
   SPEED_INCREASE_RATE: 0.02,
-  SPEED_INCREASE_INTERVAL: 10,
+  SPEED_INCREASE_INTERVAL: 1000, // Increase every 1000ms (1 second)
   MAX_SPEED_MULTIPLIER: 3,
   SPAWN_RATE_INCREASE: 0.001,
-  SPAWN_RATE_INTERVAL: 25,
+  SPAWN_RATE_INTERVAL: 2000, // Increase every 2000ms (2 seconds)
   MAX_SPAWN_RATE: 0.08,
-  MIN_GAP_DECREASE: 10,
-  MIN_GAP_INTERVAL: 15,
-  MIN_GAP_FLOOR: 100,
 };
 
-// Game state constants
+// Game state constants - simplified
 export const GAME_STATES = {
   IDLE: "idle",
   RUNNING: "running",
-  FLAME_READY: "flameReady",
-  FLAME_USED: "flameUsed",
   DEAD: "dead",
-  PAUSED: "paused",
 };

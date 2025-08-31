@@ -2,29 +2,29 @@
 export const animations = {
   // Screen shake effect
   screenShake: (duration = 300) => {
-    const gameContainer = document.querySelector('.game-container');
+    const gameContainer = document.querySelector(".game-container");
     if (!gameContainer) return;
 
     gameContainer.style.animation = `shake ${duration}ms ease-in-out`;
     setTimeout(() => {
-      gameContainer.style.animation = '';
+      gameContainer.style.animation = "";
     }, duration);
   },
 
   // Flash effect for flame power
   flashEffect: (element, duration = 200) => {
     if (!element) return;
-    
+
     element.style.animation = `flash ${duration}ms ease-in-out`;
     setTimeout(() => {
-      element.style.animation = '';
+      element.style.animation = "";
     }, duration);
   },
 
   // Particles for effects
-  createParticle: (x, y, color = '#ff6b35', type = 'flame') => {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
+  createParticle: (x, y, color = "#ff6b35", type = "flame") => {
+    const particle = document.createElement("div");
+    particle.className = "particle";
     particle.style.cssText = `
       position: absolute;
       left: ${x}px;
@@ -39,7 +39,7 @@ export const animations = {
     `;
 
     document.body.appendChild(particle);
-    
+
     setTimeout(() => {
       if (particle.parentNode) {
         particle.parentNode.removeChild(particle);
@@ -49,8 +49,8 @@ export const animations = {
 
   // Number popup animation for score
   showScorePopup: (x, y, score) => {
-    const popup = document.createElement('div');
-    popup.className = 'score-popup';
+    const popup = document.createElement("div");
+    popup.className = "score-popup";
     popup.textContent = `+${score}`;
     popup.style.cssText = `
       position: absolute;
@@ -65,18 +65,18 @@ export const animations = {
     `;
 
     document.body.appendChild(popup);
-    
+
     setTimeout(() => {
       if (popup.parentNode) {
         popup.parentNode.removeChild(popup);
       }
     }, 800);
-  }
+  },
 };
 
 // Add CSS animations to the page
 export const injectAnimationStyles = () => {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
@@ -150,6 +150,6 @@ export const injectAnimationStyles = () => {
       100% { transform: translateY(0); opacity: 1; }
     }
   `;
-  
+
   document.head.appendChild(style);
 };

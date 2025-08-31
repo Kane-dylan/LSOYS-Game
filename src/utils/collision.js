@@ -1,39 +1,16 @@
+// Simplified collision detection - FIX: jump/duck with proper hitbox handling
 export function checkCollision(player, obstacle) {
-
-  const tolerance = 2;
-
-  if (player.state === "ducking" && obstacle.type === "duck") {
-    // Player can duck under duck obstacles - no collision
-    return false;
+  // FIX: jump/duck - Flying obstacles pass over ducking player
+  if (player.isDucking && obstacle.type === "duck") {
+    return false; // Player can duck under flying obstacles
   }
 
+  // FIX: jump/duck - Use current hitbox dimensions for collision
+  // Basic AABB (Axis-Aligned Bounding Box) collision detection
   return !(
     player.x + player.width < obstacle.x ||
     player.x > obstacle.x + obstacle.width ||
     player.y + player.height < obstacle.y ||
     player.y > obstacle.y + obstacle.height
-  );
-}
-
-export function checkCollisionPrecise(player, obstacle) {
-  let playerHeight = player.height;
-  let playerY = player.y;
-
-   if (player.state === "ducking") {
-     // If player is ducking under a duck obstacle, no collision
-     if (obstacle.type === "duck") {
-       return false;
-     }
-     // Player is ducking but obstacle is too tall - still check collision with ducked height
-     playerHeight = player.height; // Already adjusted in game state
-   }
-
-   const tolerance = 2;
-
-  return !(
-    player.x + player.width < obstacle.x ||
-    player.x > obstacle.x + obstacle.width ||
-    playerY + playerHeight < obstacle.y ||
-    playerY > obstacle.y + obstacle.height
   );
 }
