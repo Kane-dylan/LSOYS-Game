@@ -1,4 +1,3 @@
-// FIX: Controller instructions component for center of top bar
 export default function ControllerInstructions({ soundEnabled }) {
   return (
     <div className="bg-black bg-opacity-40 backdrop-blur-md p-2 rounded-lg shadow-lg hidden md:block">

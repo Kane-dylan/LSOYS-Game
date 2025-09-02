@@ -1,4 +1,4 @@
-// FIX: Mobile responsive touch controls
+//  Mobile responsive touch controls
 import { useEffect, useState } from "react";
 import { GAME_STATES } from "../utils/constants";
 
@@ -11,7 +11,7 @@ export default function TouchControls({
 }) {
   const [isMobile, setIsMobile] = useState(false);
 
-  // FIX: Detect mobile screen size
+  //  Detect mobile screen size
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -19,7 +19,7 @@ export default function TouchControls({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // FIX: Mobile touch event handling
+  //  Mobile touch event handling
   useEffect(() => {
     if (!isMobile || gameState !== GAME_STATES.RUNNING) return;
 
@@ -54,14 +54,14 @@ export default function TouchControls({
     };
   }, [gameState, onJump, onDuck, onJumpRelease, onDuckRelease, isMobile]);
 
-  // FIX: Show touch controls only on mobile when game is running
+  //  Show touch controls only on mobile when game is running
   if (!isMobile || gameState !== GAME_STATES.RUNNING) {
     return null;
   }
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10">
-      {/* FIX: Clean mobile touch areas */}
+      {/*  Clean mobile touch areas */}
       <div className="absolute top-0 left-0 w-full h-1/2 border-b border-white border-opacity-10 flex items-center justify-center">
         <div className="text-white text-opacity-50 text-sm font-bold bg-black bg-opacity-30 px-3 py-1 rounded">
           TAP TO JUMP

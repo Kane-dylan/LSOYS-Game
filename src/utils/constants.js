@@ -2,8 +2,8 @@
 // Removed: FLAME constants, GROUND_Y, scoring constants, pause state, flame states
 
 export const PLAYER = {
-  WIDTH: 45, // FIX: Increased for better collision detection
-  HEIGHT: 65, // FIX: Increased for better collision detection
+  WIDTH: 45, //  Increased for better collision detection
+  HEIGHT: 65, //  Increased for better collision detection
   DUCK_HEIGHT_RATIO: 0.55,
   GROUND_Y: 300,
   GRAVITY: 0.002,
@@ -19,11 +19,11 @@ export const GAME = {
 };
 
 export const OBSTACLE = {
-  WIDTH: 35, // FIX: Increased for better collision detection
-  HEIGHT: 55, // FIX: Increased for better collision detection
-  DUCK_HEIGHT: 30, // FIX: Increased proportionally
+  WIDTH: 35, //  Increased for better collision detection
+  HEIGHT: 55, //  Increased for better collision detection
+  DUCK_HEIGHT: 30, //  Increased proportionally
   DUCK_Y_OFFSET: 30,
-  FLY_Y: 250, // FIX: Flying obstacle positioned so ducking player (top at ~264) can pass under (bottom at 250)
+  FLY_Y: 250, //  Flying obstacle positioned so ducking player (top at ~264) can pass under (bottom at 250)
   SPEED: 4,
   SPAWN_X: 900,
 };

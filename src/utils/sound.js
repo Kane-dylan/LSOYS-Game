@@ -74,12 +74,12 @@ class SoundManager {
     }
   }
 
-  // FIX: Sound API for all game events
+  //  Sound API for all game events
   playJump() {
     this.playSound("jump");
   }
 
-  // FIX: Duck sound when ducking starts
+  //  Duck sound when ducking starts
   playDuck() {
     this.playSound("jumpDuckMusic"); // Using jump-duck music for duck action
   }
@@ -88,7 +88,7 @@ class SoundManager {
     this.playSound("collision");
   }
 
-  // FIX: Game state sounds
+  //  Game state sounds
   playGameMusic() {
     this.playSound("gameMusic");
   }
@@ -97,7 +97,7 @@ class SoundManager {
     this.playSound("loseMusic");
   }
 
-  // FIX: UI action sounds
+  //  UI action sounds
   playRestart() {
     this.playBeep(500, 0.2, "sine"); // Restart sound
   }

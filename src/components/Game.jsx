@@ -21,7 +21,6 @@ import {
   SCORE,
 } from "../utils/constants";
 
-// FEATURE: Enhanced Game Component with score, pause, sound, and mobile support
 export default function Game() {
   // Main game state
   const [gameState, setGameState] = useState(GAME_STATES.IDLE);
@@ -38,7 +37,7 @@ export default function Game() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // FIX: jump/duck - Player physics state with proper variables
+  // jump/duck - Player physics state with proper variables
   const [player, setPlayer] = useState({
     x: 50,
     y: PLAYER.GROUND_Y, // Start exactly at ground level
@@ -51,7 +50,7 @@ export default function Game() {
     state: "running",
   });
 
-  // FIX: jump/duck - Input state tracking
+  // jump/duck - Input state tracking
   const [controls, setControls] = useState({
     jumpDown: false,
     duckDown: false,
@@ -68,7 +67,7 @@ export default function Game() {
     setBestScore(savedBest);
   }, []);
 
-  // FIX: jump/duck - Proper input handling with keydown/keyup events
+  //  jump/duck - Proper input handling with keydown/keyup events
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Handle game state changes
@@ -147,24 +146,24 @@ export default function Game() {
     lastTimeRef.current = performance.now();
   };
 
-  // FIX: Pause functionality with sound
+  //  Pause functionality with sound
   const pauseGame = () => {
     setGameState(GAME_STATES.PAUSED);
-    soundManager.playPause(); // FIX: Pause sound
+    soundManager.playPause(); //  Pause sound
   };
 
-  // FIX: Resume functionality with sound
+  //  Resume functionality with sound
   const resumeGame = () => {
     setGameState(GAME_STATES.RUNNING);
     lastTimeRef.current = performance.now(); // Reset timer to prevent time jumps
-    soundManager.playResume(); // FIX: Resume sound
+    soundManager.playResume(); //  Resume sound
   };
 
   const gameOver = () => {
     setGameState(GAME_STATES.DEAD);
     setPlayer((prev) => ({ ...prev, state: "dead" }));
 
-    // FIX: Play collision and lose music sounds
+    //  Play collision and lose music sounds
     soundManager.playCollision();
     soundManager.playLoseMusic();
 
@@ -203,7 +202,7 @@ export default function Game() {
     const newObstacle = {
       id: Date.now() + Math.random(),
       x: OBSTACLE.SPAWN_X,
-      y: obstacleType === "duck" ? OBSTACLE.FLY_Y : PLAYER.GROUND_Y, // FIX: jump/duck - use FLY_Y for flying obstacles
+      y: obstacleType === "duck" ? OBSTACLE.FLY_Y : PLAYER.GROUND_Y, //  jump/duck - use FLY_Y for flying obstacles
       width: OBSTACLE.WIDTH,
       height: obstacleType === "duck" ? OBSTACLE.DUCK_HEIGHT : OBSTACLE.HEIGHT,
       type: obstacleType,
@@ -213,7 +212,7 @@ export default function Game() {
     setLastObstacleSpawn(gameTime);
   };
 
-  // FIX: jump/duck - Delta-time game loop with proper physics
+  //  jump/duck - Delta-time game loop with proper physics
   useEffect(() => {
     if (!isRunning) return;
 
@@ -230,7 +229,7 @@ export default function Game() {
       // Get difficulty modifiers
       const { speedMultiplier, spawnRate } = getDifficultyModifiers(gameTime);
 
-      // FIX: jump/duck - Player physics with proper delta-time integration
+      //  jump/duck - Player physics with proper delta-time integration
       setPlayer((prev) => {
         let newY = prev.y;
         let newVy = prev.vy;
@@ -307,11 +306,11 @@ export default function Game() {
           .filter((obs) => obs.x + obs.width > 0)
       );
 
-      // FIX: Spawn obstacles with random variance for better spacing
+      //  Spawn obstacles with random variance for better spacing
       const timeSinceLastSpawn = gameTime - lastObstacleSpawn;
       const lastObstacle = obstacles[obstacles.length - 1];
 
-      // FIX: Add random variance to minimum gap
+      //  Add random variance to minimum gap
       const randomGap =
         GAME.OBSTACLE_MIN_GAP + Math.random() * GAME.OBSTACLE_GAP_VARIANCE;
       const hasMinimumGap =
@@ -346,7 +345,7 @@ export default function Game() {
   }, [isRunning, controls, gameTime, obstacles, player]);
 
   const handleRestart = () => {
-    // FIX: Restart sound
+    //  Restart sound
     soundManager.playRestart();
 
     setGameState(GAME_STATES.IDLE);
@@ -370,20 +369,20 @@ export default function Game() {
     lastTimeRef.current = performance.now();
   };
 
-  // FIX: Mobile touch control handlers with sounds
+  //  Mobile touch control handlers with sounds
   const handleJump = () => {
     if (gameState === GAME_STATES.IDLE) {
       startGame();
       return;
     }
     if (gameState === GAME_STATES.RUNNING && !controls.jumpDown) {
-      soundManager.playJump(); // FIX: Jump sound
+      soundManager.playJump(); //  Jump sound
     }
     setControls((prev) => ({ ...prev, jumpDown: true }));
   };
 
   const handleDuck = () => {
-    // FIX: Duck sound when starting to duck
+    //  Duck sound when starting to duck
     if (gameState === GAME_STATES.RUNNING && !controls.duckDown) {
       soundManager.playDuck();
     }
@@ -400,10 +399,10 @@ export default function Game() {
 
   return (
     <div className="game-container relative w-full min-h-screen bg-gradient-to-b from-sky-400 to-sky-200 overflow-hidden">
-      {/* FIX: Top bar layout - left: scoreboard, center: instructions, right: difficulty */}
+      {/*  Top bar layout - left: scoreboard, center: instructions, right: difficulty */}
       <div className="absolute top-4 left-0 right-0 z-20">
         <div className="flex justify-between items-start px-4 gap-4">
-          {/* FIX: Scoreboard fixed on left */}
+          {/*  Scoreboard fixed on left */}
           <div className="flex-shrink-0">
             <Scoreboard
               score={score}
@@ -412,12 +411,12 @@ export default function Game() {
             />
           </div>
 
-          {/* FIX: Controller instructions centered (hidden on small screens) */}
+          {/*  Controller instructions centered (hidden on small screens) */}
           <div className="flex-1 flex justify-center">
             <ControllerInstructions soundEnabled={soundEnabled} />
           </div>
 
-          {/* FIX: Difficulty board fixed on right */}
+          {/*  Difficulty board fixed on right */}
           <div className="flex-shrink-0">
             {isRunning && (
               <DifficultyIndicator
@@ -472,7 +471,7 @@ export default function Game() {
         />
       )}
 
-      {/* FIX: Game action buttons moved below top bar */}
+      {/*  Game action buttons moved below top bar */}
       <div className="absolute top-20 left-4 z-20">
         <div className="bg-black bg-opacity-40 backdrop-blur-md p-2 rounded-lg shadow-lg">
           <div className="flex gap-2">
@@ -512,7 +511,7 @@ export default function Game() {
         </div>
       </div>
 
-      {/* FIX: Game status text positioned to avoid UI overlap */}
+      {/*  Game status text positioned to avoid UI overlap */}
       <div className="absolute top-16 sm:top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         {gameState === GAME_STATES.IDLE && (
           <div className="bg-black bg-opacity-60 backdrop-blur-md p-4 sm:p-6 rounded-lg shadow-xl text-center max-w-xs sm:max-w-sm mx-4">

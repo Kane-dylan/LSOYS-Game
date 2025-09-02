@@ -16,11 +16,11 @@ export default function Leaderboard({ currentScore, onClose }) {
         console.warn("Failed to load leaderboard:", error);
         // Fallback data
         setLeaderboardData([
-          { name: "Alice", score: 128 },
-          { name: "Bob", score: 104 },
-          { name: "Cara", score: 92 },
-          { name: "Dev", score: 77 },
-          { name: "Eli", score: 65 },
+          { name: "x", score: 128 },
+          { name: "y", score: 104 },
+          { name: "z", score: 92 },
+          { name: "u", score: 77 },
+          { name: "v", score: 65 },
         ]);
       } finally {
         setLoading(false);

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* FIX: Responsive design and UI polish */
+/*  Responsive design and UI polish */
 * {
   box-sizing: border-box;
 }
@@ -20,7 +20,7 @@ body {
   -ms-user-select: none;
 }
 
-/* FIX: Game container with responsive handling */
+/*  Game container with responsive handling */
 .game-container {
   user-select: none;
   -webkit-user-select: none;
@@ -32,7 +32,7 @@ body {
   overflow: hidden;
 }
 
-/* FIX: Mobile responsive adjustments */
+/*  Mobile responsive adjustments */
 @media (max-width: 768px) {
   .game-container {
     min-height: 100vh;
@@ -40,7 +40,7 @@ body {
   }
 }
 
-/* FIX: Button hover and glow effects */
+/*  Button hover and glow effects */
 button {
   transition: all 0.2s ease;
 }
@@ -54,7 +54,7 @@ button:active {
   transform: translateY(0);
 }
 
-/* FIX: Subtle animations */
+/*  Subtle animations */
 @keyframes bounce-in {
   0% {
     transform: scale(0.3);
